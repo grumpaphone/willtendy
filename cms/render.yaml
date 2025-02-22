@@ -11,8 +11,6 @@ services:
         value: production
       - key: DATABASE_CLIENT
         value: postgres
-      - key: DATABASE_FILENAME
-        value: .tmp/data.db
       - key: HOST
         value: 0.0.0.0
       - key: PORT
@@ -27,13 +25,7 @@ services:
         generateValue: true
       - key: DATABASE_SSL
         value: true
-      - key: DATABASE_HOST
-        sync: false
-      - key: DATABASE_PORT
-        value: 5432
-      - key: DATABASE_NAME
-        sync: false
-      - key: DATABASE_USERNAME
-        sync: false
-      - key: DATABASE_PASSWORD
-        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: willtendy-db
+          property: connectionString
