@@ -3,4 +3,7 @@ builder = "nixpacks"
 buildCommand = "cd cms && npm ci && npm run build"
 
 [deploy]
-startCommand = "cd cms && npm run start" 
+startCommand = "cd cms && npm run start"
+healthcheckPath = "/api/videos?pagination[pageSize]=1"
+healthcheckTimeout = 300
+healthcheckInterval = 15 
