@@ -3,8 +3,8 @@ const { parse } = require('csv-parse');
 const axios = require('axios');
 const path = require('path');
 
-const API_TOKEN =
-	'3c1cad05ecce8a58be443305f18f04c05bb263c7d89fbf3d8c27a94bbb0ac4215d4a2e3639588e44e83829fd4e2a76b1a612860cac88aeb9fa13a3d7cad918f85a59b316065a50858d24952815935c7fea45315c7925e9f74976e33670f4f473a8f5546d891e8cc0ebf702f8120fc87066d16877e0f64d9058a372d50c8c7df9';
+// Replace this with your new API token from Strapi admin panel
+const API_TOKEN = process.env.STRAPI_API_TOKEN;
 
 function generateSlug(title) {
 	return title
@@ -45,12 +45,12 @@ async function importVideos() {
 
 					const data = {
 						data: {
-							text: title,
-							slug: slug,
-							url: videoUrl,
-							thumbnail: thumbnail,
-							type: type,
-							order: parseInt(record.Order) || 0,
+							Text: title,
+							Slug: slug,
+							URL: videoUrl,
+							Thumbnail: thumbnail,
+							Type: type,
+							Order: parseInt(record.Order) || 0,
 							publishedAt: new Date().toISOString(), // Set publishedAt to make it visible
 						},
 					};
@@ -119,6 +119,11 @@ async function importVideos() {
 			error.response?.data?.error || error.message
 		);
 	}
+}
+
+if (!API_TOKEN) {
+	console.error('Please set the STRAPI_API_TOKEN environment variable');
+	process.exit(1);
 }
 
 importVideos();

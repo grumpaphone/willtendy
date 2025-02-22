@@ -1,0 +1,123 @@
+{
+	"live": [
+		{
+			"id": 1,
+			"Text": "Blame My Youth - Fantastic",
+			"Slug": "900314188-share-copy",
+			"URL": "https://vimeo.com/900314188?share=copy",
+			"Thumbnail": "https://uploads-ssl.webflow.com/65a9afbe5531aa55cc1123a8/65a9beef6eb5f5704f78326c_BMY%20Fantastic.jpeg",
+			"Type": "live",
+			"Order": 1
+		},
+		{
+			"id": 2,
+			"Text": "Blame My Youth - Tentacles",
+			"Slug": "bmy-tentacles",
+			"URL": "https://vimeo.com/900314143?autoplay=1",
+			"Thumbnail": "https://uploads-ssl.webflow.com/65a9afbe5531aa55cc1123a8/65a9be38f6e5e7808a240b18_BMY%20-%20Tent.jpeg",
+			"Type": "live",
+			"Order": 2
+		},
+		{
+			"id": 3,
+			"Text": "Blame My Youth - Tour Recap",
+			"Slug": "bmy-recap",
+			"URL": "https://vimeo.com/900314956?share=copy",
+			"Thumbnail": "https://uploads-ssl.webflow.com/65a9afbe5531aa55cc1123a8/65a9bde07ac6695bb67ad92c_BMY%20Tour.jpeg",
+			"Type": "live",
+			"Order": 3
+		},
+		{
+			"id": 4,
+			"Text": "Joseph - Green Eyes",
+			"Slug": "joseph-green",
+			"URL": "https://vimeo.com/900430247?share=copy",
+			"Thumbnail": "https://uploads-ssl.webflow.com/65a9afbe5531aa55cc1123a8/65a9bcfc0f3de80d3d5b34d9_Green%20Eyes%20copy.jpg",
+			"Type": "live",
+			"Order": 4
+		},
+		{
+			"id": 5,
+			"Text": "Joseph - Revolving Door",
+			"Slug": "joseph-revdoor",
+			"URL": "https://vimeo.com/900430195?share=copy",
+			"Thumbnail": "https://uploads-ssl.webflow.com/65a9afbe5531aa55cc1123a8/65a9b86020d51556b5534a81_rev%20door%20copy.jpg",
+			"Type": "live",
+			"Order": 5
+		},
+		{
+			"id": 6,
+			"Text": "Joseph - The Sun (CBS This Morning)",
+			"Slug": "joseph---the-sun-cbs-this-morning",
+			"URL": "https://vimeo.com/900430136?share=copy",
+			"Thumbnail": "https://uploads-ssl.webflow.com/65a9afbe5531aa55cc1123a8/65a9bc19dae657805199c8b0_THE%20SUN%20copy.jpg",
+			"Type": "live",
+			"Order": 6
+		},
+		{
+			"id": 7,
+			"Text": "Mercury Rev - Holes Live in Tel Aviv",
+			"Slug": "mercury-rev---holes-live-in-tel-aviv",
+			"URL": "https://vimeo.com/900430322?share=copy",
+			"Thumbnail": "https://uploads-ssl.webflow.com/65a9afbe5531aa55cc1123a8/65a9b880126a439396a9853e_MERCURY%20REV%20copy.jpg",
+			"Type": "live",
+			"Order": 7
+		},
+		{
+			"id": 8,
+			"Text": "Joseph - Conan",
+			"Slug": "joseph-conan",
+			"URL": "https://vimeo.com/900315023?share=copy",
+			"Thumbnail": "https://uploads-ssl.webflow.com/65a9afbe5531aa55cc1123a8/65a9bbf739b455e8b5ffe1bf_CONAN.jpg",
+			"Type": "live",
+			"Order": 8
+		}
+	],
+	"playing_along": [
+		{
+			"id": 1,
+			"Text": "Smashing Pumpkins - Song For A Son",
+			"Slug": "smashing-pumpkins---song-for-a-son",
+			"URL": "https://vimeo.com/904298029?share=copy",
+			"Thumbnail": "https://uploads-ssl.webflow.com/65a9afbe5531aa55cc1123a8/65a9d246d62b7d8c613f1632_Song%20For%20A%20Son.jpeg",
+			"Type": "playing_along",
+			"Order": 1
+		},
+		{
+			"id": 2,
+			"Text": "Hotel California",
+			"Slug": "hotel-california",
+			"URL": "https://vimeo.com/900411266?share=copy",
+			"Thumbnail": "https://uploads-ssl.webflow.com/65a9afbe5531aa55cc1123a8/65a9d860d0107e155705d0ff_vumbnail%20(1).jpg",
+			"Type": "playing_along",
+			"Order": 2
+		},
+		{
+			"id": 3,
+			"Text": "Air - Playground Love",
+			"Slug": "air---playground-love",
+			"URL": "https://vimeo.com/900405592?share=copy",
+			"Thumbnail": "https://uploads-ssl.webflow.com/65a9afbe5531aa55cc1123a8/65a9d89469daf6c1b2c09c6b_vumbnail%20(2).jpg",
+			"Type": "playing_along",
+			"Order": 3
+		},
+		{
+			"id": 4,
+			"Text": "Ghost",
+			"Slug": "ghost",
+			"URL": "https://vimeo.com/900407297?share=copy",
+			"Thumbnail": "https://uploads-ssl.webflow.com/65a9afbe5531aa55cc1123a8/65a9d90f0844e729d3dfde25_vumbnail%20(3).jpg",
+			"Type": "playing_along",
+			"Order": 4
+		},
+		{
+			"id": 5,
+			"Text": "Pink Floyd - Time",
+			"Slug": "pink-floyd---time",
+			"URL": "https://vimeo.com/900405096?share=copy",
+			"Thumbnail": "https://uploads-ssl.webflow.com/65a9afbe5531aa55cc1123a8/65a9d8197764605abd705f21_time.jpeg",
+			"Type": "playing_along",
+			"Order": 5
+		}
+	]
+}
