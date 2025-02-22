@@ -20,6 +20,7 @@ dist/
 .env.development.local
 .env.test.local
 .env.production.local
+.env.example
 
 # Debug
 npm-debug.log*
@@ -44,3 +45,12 @@ yarn-error.log*
 # Build files
 *.tsbuildinfo
 next-env.d.ts
+
+# Database
+*.db
+data/database/
+cms/.tmp/
+
+# Config files with sensitive data
+.cursor/settings.json
+.mcp/*.config.json
