@@ -1,15 +1,13 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import './globals.css';
-import '@mantine/core/styles.css';
 import { Providers } from '@/components/Providers';
-import { Header } from '@/components/Header';
 
-const inter = Inter({ subsets: ['latin'] });
+const montserrat = Montserrat({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
 	title: 'Will Tendy',
-	description: 'Personal website of Will Tendy',
+	description: 'Guitar | Bass | Keys - LA/NYC',
 };
 
 export default function RootLayout({
@@ -18,18 +16,9 @@ export default function RootLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<html lang='en'>
-			<head>
-				<link
-					href='https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap'
-					rel='stylesheet'
-				/>
-			</head>
-			<body className={inter.className}>
-				<Providers>
-					<Header />
-					<main>{children}</main>
-				</Providers>
+		<html lang="en">
+			<body className={montserrat.className}>
+				<Providers>{children}</Providers>
 			</body>
 		</html>
 	);

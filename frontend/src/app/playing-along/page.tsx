@@ -1,58 +1,53 @@
 'use client';
 
-import { Container, SimpleGrid, Title, Alert, Text } from '@mantine/core';
-import { VideoCard } from '@/components/VideoCard';
-import { getPlayingAlongVideos, type Video } from '@/lib/api';
+import { VideoGrid } from '@/components/VideoGrid';
+import { getPlayingAlongVideos } from '@/lib/api';
 import { useState, useEffect } from 'react';
 
 export const revalidate = 3600; // Revalidate every hour
 
 export default function PlayingAlongPage() {
-	const [videos, setVideos] = useState<Video[]>([]);
+	const [videos, setVideos] = useState([]);
 	const [error, setError] = useState('');
+	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
-		async function fetchData() {
+		async function fetchVideos() {
 			try {
-				console.log('Fetching playing along videos...');
 				const data = await getPlayingAlongVideos();
-				console.log(
-					'Received playing along videos:',
-					JSON.stringify(data, null, 2)
-				);
-				setVideos(data || []);
+				setVideos(data);
 			} catch (err) {
 				console.error('Error fetching playing along videos:', err);
-				setError(
-					'Failed to load videos. Please make sure the CMS is running at http://localhost:1337'
-				);
+				setError('Failed to load videos. Please try again later.');
+			} finally {
+				setIsLoading(false);
 			}
 		}
-		fetchData();
+
+		fetchVideos();
 	}, []);
 
 	return (
-		<Container size='lg' py='xl'>
-			<Title order={1} mb='xl'>
-				Playing Along
-			</Title>
+		<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
+			<h1 className='text-3xl font-bold mb-8'>Playing Along</h1>
 
 			{error ? (
-				<Alert color='red' title='Error' mb='xl'>
-					{error}
-				</Alert>
-			) : videos.length > 0 ? (
-				<SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing='lg'>
-					{videos.map((video) => (
-						<div key={video.id}>
-							<pre>{JSON.stringify(video, null, 2)}</pre>
-							<VideoCard video={video} type='playing' />
+				<div className='rounded-md bg-red-50 p-4'>
+					<div className='flex'>
+						<div className='ml-3'>
+							<h3 className='text-sm font-medium text-red-800'>Error</h3>
+							<div className='mt-2 text-sm text-red-700'>{error}</div>
 						</div>
-					))}
-				</SimpleGrid>
+					</div>
+				</div>
 			) : (
-				<Text c='dimmed'>No playing along videos available yet.</Text>
+				<VideoGrid
+					videos={videos}
+					type='playing'
+					error={error}
+					isLoading={isLoading}
+				/>
 			)}
-		</Container>
+		</div>
 	);
 }
