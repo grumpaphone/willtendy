@@ -9,4 +9,20 @@ module.exports = ({ env }) => ({
 	webhooks: {
 		populateRelations: env.bool('WEBHOOKS_POPULATE_RELATIONS', false),
 	},
+	// Add trusted proxies and hosts for healthcheck
+	settings: {
+		proxy: {
+			enabled: true,
+			host: env('HOST', '0.0.0.0'),
+			port: env.int('PORT', 1337),
+		},
+		cors: {
+			enabled: true,
+			origin: [
+				'https://healthcheck.railway.app',
+				'https://willtendy-production.up.railway.app',
+				'http://localhost:3000',
+			],
+		},
+	},
 });
