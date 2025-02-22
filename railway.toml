@@ -4,11 +4,10 @@ buildCommand = "cd cms && npm ci && npm run build"
 
 [deploy]
 startCommand = "cd cms && npm run start"
-healthcheckPath = "/api/health"
-healthcheckTimeout = 180
-healthcheckInterval = 45
+healthcheckPath = "/health"
+healthcheckPort = "8080"
+healthcheckTimeout = 60
 restartPolicyType = "on_failure"
-restartPolicyMaxRetries = 5
 
 [deploy.healthcheck]
 path = "/api/health"
