@@ -3,7 +3,9 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"scripts": {
-		"start": "./start.sh",
+		"frontend": "cd frontend && npm run dev",
+		"backend": "cd cms && npm run develop",
+		"dev": "concurrently \"npm run backend\" \"npm run frontend\"",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
