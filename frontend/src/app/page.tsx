@@ -1,6 +1,5 @@
 'use client';
 
-import { Container, Title, Text } from '@mantine/core';
 import Image from 'next/image';
 import { VideoGrid } from '@/components/VideoGrid';
 import { getLiveVideos, getPlayingAlongVideos, type Video } from '@/lib/api';
@@ -65,7 +64,7 @@ export default function Home() {
 
 	return (
 		<div className='section'>
-			<Container size='lg'>
+			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
 				<section className='section-2'>
 					{/* Navigation */}
 					<div className='navigation'>
@@ -154,7 +153,7 @@ export default function Home() {
 						</div>
 					</div>
 				</div>
-			</Container>
+			</div>
 		</div>
 	);
 }

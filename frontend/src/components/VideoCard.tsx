@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, Image, Text, AspectRatio } from '@mantine/core';
+import Image from 'next/image';
 import Link from 'next/link';
 import { type Video } from '@/lib/api';
 
@@ -24,39 +24,34 @@ export function VideoCard({ video, type }: VideoCardProps) {
 		videoUrl,
 		thumbnailUrl,
 		title,
-		slug
+		slug,
 	});
 
 	return (
-		<Card
-			component={Link}
+		<Link
 			href={`/${type === 'live' ? 'live-videos' : 'playing-along'}/${slug}`}
-			padding='0'
-			radius='md'
-			className='no-underline hover:transform hover:scale-[1.02] transition-transform'>
-			<AspectRatio ratio={16 / 9}>
-				<div className="relative w-full h-full">
-					<Image
-						src={thumbnailUrl}
-						alt={title}
-						fill
-						className='object-cover'
-						onError={(e: any) => {
-							console.error('Image failed to load:', thumbnailUrl);
-							const target = e.target as HTMLImageElement;
-							target.src = DEFAULT_THUMBNAIL;
-						}}
-					/>
-				</div>
-			</AspectRatio>
-			<div className='p-4'>
-				<Text size='lg' fw={500} lineClamp={2}>
-					{title}
-				</Text>
-				<Text size='sm' c='dimmed' mt={4}>
-					{type === 'live' ? 'Live Performance' : 'Playing Along'}
-				</Text>
+			className='block rounded-lg overflow-hidden bg-white shadow-lg hover:transform hover:scale-[1.02] transition-transform no-underline'>
+			<div className='relative aspect-video'>
+				<Image
+					src={thumbnailUrl}
+					alt={title}
+					fill
+					className='object-cover'
+					onError={(e: any) => {
+						console.error('Image failed to load:', thumbnailUrl);
+						const target = e.target as HTMLImageElement;
+						target.src = DEFAULT_THUMBNAIL;
+					}}
+				/>
 			</div>
-		</Card>
+			<div className='p-4'>
+				<h3 className='text-lg font-medium line-clamp-2 text-gray-900'>
+					{title}
+				</h3>
+				<p className='mt-1 text-sm text-gray-600'>
+					{type === 'live' ? 'Live Performance' : 'Playing Along'}
+				</p>
+			</div>
+		</Link>
 	);
 }

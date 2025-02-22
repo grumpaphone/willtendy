@@ -1,6 +1,5 @@
 'use client';
 
-import { Container, Title, AspectRatio, Alert } from '@mantine/core';
 import { getLiveVideoBySlug } from '@/lib/api';
 import { notFound } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -45,21 +44,24 @@ export default function LiveVideoPage({ params }: Props) {
 
 	if (loading) {
 		return (
-			<Container size='lg' py='xl'>
-				<Title order={1} mb='xl'>
-					Loading...
-				</Title>
-			</Container>
+			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
+				<h1 className='text-2xl font-bold mb-8'>Loading...</h1>
+			</div>
 		);
 	}
 
 	if (error) {
 		return (
-			<Container size='lg' py='xl'>
-				<Alert color='red' title='Error' mb='xl'>
-					{error}
-				</Alert>
-			</Container>
+			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
+				<div className='rounded-md bg-red-50 p-4 mb-8'>
+					<div className='flex'>
+						<div className='ml-3'>
+							<h3 className='text-sm font-medium text-red-800'>Error</h3>
+							<div className='mt-2 text-sm text-red-700'>{error}</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		);
 	}
 
@@ -72,28 +74,31 @@ export default function LiveVideoPage({ params }: Props) {
 	if (!vimeoId) {
 		console.error('LiveVideoPage: Invalid Vimeo URL:', video.URL);
 		return (
-			<Container size='lg' py='xl'>
-				<Alert color='red' title='Error' mb='xl'>
-					Invalid video URL
-				</Alert>
-			</Container>
+			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
+				<div className='rounded-md bg-red-50 p-4 mb-8'>
+					<div className='flex'>
+						<div className='ml-3'>
+							<h3 className='text-sm font-medium text-red-800'>Error</h3>
+							<div className='mt-2 text-sm text-red-700'>Invalid video URL</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		);
 	}
 
 	return (
-		<Container size='lg' py='xl'>
-			<Title order={1} mb='xl'>
-				{video.Text}
-			</Title>
-			<AspectRatio ratio={16 / 9} mb='xl'>
+		<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
+			<h1 className='text-2xl font-bold mb-8'>{video.Text}</h1>
+			<div className='relative w-full aspect-video mb-8'>
 				<iframe
 					src={`https://player.vimeo.com/video/${vimeoId}`}
 					title={video.Text}
 					allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
 					allowFullScreen
-					className='w-full h-full border-0'
+					className='absolute inset-0 w-full h-full border-0'
 				/>
-			</AspectRatio>
-		</Container>
+			</div>
+		</div>
 	);
 }

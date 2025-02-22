@@ -1,14 +1,5 @@
 'use client';
 
-import {
-	Modal,
-	AspectRatio,
-	Title,
-	ActionIcon,
-	Group,
-	Text,
-} from '@mantine/core';
-import { IconX, IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
 import { useEffect, useCallback } from 'react';
 import { type Video } from '@/lib/api';
 
@@ -22,16 +13,16 @@ interface VideoLightboxProps {
 	hasPrevious: boolean;
 }
 
-export function VideoLightbox({ 
-	video, 
-	opened, 
+export function VideoLightbox({
+	video,
+	opened,
 	onClose,
 	onNext,
 	onPrevious,
 	hasNext,
-	hasPrevious
+	hasPrevious,
 }: VideoLightboxProps) {
-	if (!video) return null;
+	if (!video || !opened) return null;
 
 	// Extract video ID from Vimeo URL
 	const vimeoId = video.URL.match(/vimeo\.com\/(\d+)/)?.[1];
@@ -44,118 +35,111 @@ export function VideoLightbox({
 				onNext();
 			} else if (event.key === 'ArrowLeft' && hasPrevious) {
 				onPrevious();
+			} else if (event.key === 'Escape') {
+				onClose();
 			}
 		},
-		[onNext, onPrevious, hasNext, hasPrevious]
+		[onNext, onPrevious, onClose, hasNext, hasPrevious]
 	);
 
 	useEffect(() => {
 		if (opened) {
 			document.addEventListener('keydown', handleKeyDown);
+			document.body.style.overflow = 'hidden';
 		}
 		return () => {
 			document.removeEventListener('keydown', handleKeyDown);
+			document.body.style.overflow = '';
 		};
 	}, [opened, handleKeyDown]);
 
 	return (
-		<Modal
-			opened={opened}
-			onClose={onClose}
-			size='xl'
-			padding={0}
-			radius='md'
-			centered
-			lockScroll
-			closeOnEscape
-			transitionProps={{
-				duration: 300,
-				transition: 'fade',
-			}}
-			overlayProps={{
-				blur: 5,
-				opacity: 0.7,
-				color: '#000',
-			}}
-			withCloseButton={false}
-			styles={{
-				header: {
-					padding: '1rem',
-					marginBottom: 0,
-					backgroundColor: 'rgba(0, 0, 0, 0.8)',
-					borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-				},
-				body: {
-					padding: 0,
-					backgroundColor: '#000',
-				},
-				content: {
-					overflow: 'hidden',
-					borderRadius: '8px',
-					boxShadow: '0 24px 48px rgba(0, 0, 0, 0.2)',
-				},
-				overlay: {
-					backdropFilter: 'blur(5px)',
-				},
-			}}>
-			<div className='video-lightbox'>
-				<Group justify='space-between' p='md' className='video-header'>
+		<div className='fixed inset-0 z-50 flex items-center justify-center'>
+			{/* Backdrop */}
+			<div
+				className='fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm'
+				onClick={onClose}
+			/>
+
+			{/* Content */}
+			<div className='relative w-full max-w-7xl mx-4 bg-black rounded-lg overflow-hidden shadow-2xl'>
+				{/* Header */}
+				<div className='flex justify-between items-center p-4 bg-black/80 border-b border-white/10'>
 					<div>
-						<Title order={3} c='white' size='h4'>
-							{video.Text}
-						</Title>
-						<Text size='sm' c='dimmed'>
-							Use arrow keys to navigate
-						</Text>
+						<h3 className='text-lg font-medium text-white'>{video.Text}</h3>
+						<p className='text-sm text-gray-400'>Use arrow keys to navigate</p>
 					</div>
-					<Group>
+					<div className='flex gap-2'>
 						{hasPrevious && (
-							<ActionIcon
-								variant='subtle'
-								color='gray'
+							<button
 								onClick={onPrevious}
-								aria-label='Previous video'
-								className='nav-button'>
-								<IconArrowLeft size={20} />
-							</ActionIcon>
+								className='p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors'
+								aria-label='Previous video'>
+								<svg
+									className='w-5 h-5'
+									fill='none'
+									stroke='currentColor'
+									viewBox='0 0 24 24'>
+									<path
+										strokeLinecap='round'
+										strokeLinejoin='round'
+										strokeWidth={2}
+										d='M15 19l-7-7 7-7'
+									/>
+								</svg>
+							</button>
 						)}
 						{hasNext && (
-							<ActionIcon
-								variant='subtle'
-								color='gray'
+							<button
 								onClick={onNext}
-								aria-label='Next video'
-								className='nav-button'>
-								<IconArrowRight size={20} />
-							</ActionIcon>
+								className='p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors'
+								aria-label='Next video'>
+								<svg
+									className='w-5 h-5'
+									fill='none'
+									stroke='currentColor'
+									viewBox='0 0 24 24'>
+									<path
+										strokeLinecap='round'
+										strokeLinejoin='round'
+										strokeWidth={2}
+										d='M9 5l7 7-7 7'
+									/>
+								</svg>
+							</button>
 						)}
-						<ActionIcon
-							variant='subtle'
-							color='gray'
+						<button
 							onClick={onClose}
-							aria-label='Close'
-							className='nav-button'>
-							<IconX size={20} />
-						</ActionIcon>
-					</Group>
-				</Group>
+							className='p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-full transition-colors'
+							aria-label='Close'>
+							<svg
+								className='w-5 h-5'
+								fill='none'
+								stroke='currentColor'
+								viewBox='0 0 24 24'>
+								<path
+									strokeLinecap='round'
+									strokeLinejoin='round'
+									strokeWidth={2}
+									d='M6 18L18 6M6 6l12 12'
+								/>
+							</svg>
+						</button>
+					</div>
+				</div>
 
-				<AspectRatio ratio={16 / 9}>
+				{/* Video */}
+				<div className='relative w-full aspect-video'>
 					<iframe
 						key={vimeoId}
 						src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1&title=0&byline=0&portrait=0`}
 						title={video.Text}
 						allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
 						allowFullScreen
-						style={{
-							border: 'none',
-							width: '100%',
-							height: '100%',
-							backgroundColor: '#000',
-						}}
+						className='absolute inset-0 w-full h-full border-0 bg-black'
 					/>
-				</AspectRatio>
+				</div>
 			</div>
-		</Modal>
+		</div>
 	);
 }

@@ -1,6 +1,5 @@
 'use client';
 
-import { Alert, Text, Skeleton } from '@mantine/core';
 import Image from 'next/image';
 import { type Video } from '@/lib/api';
 import { useState } from 'react';
@@ -19,7 +18,7 @@ function VideoSkeleton() {
 	return (
 		<div className='lightbox-link'>
 			<div className='imagewrapper'>
-				<Skeleton height={200} radius="md" animate={true} />
+				<div className='h-48 rounded-md bg-gray-200 animate-pulse' />
 			</div>
 		</div>
 	);
@@ -33,9 +32,14 @@ export function VideoGrid({ videos, type, error, isLoading }: VideoGridProps) {
 
 	if (error) {
 		return (
-			<Alert color='red' title='Error'>
-				{error}
-			</Alert>
+			<div className='rounded-md bg-red-50 p-4'>
+				<div className='flex'>
+					<div className='ml-3'>
+						<h3 className='text-sm font-medium text-red-800'>Error</h3>
+						<div className='mt-2 text-sm text-red-700'>{error}</div>
+					</div>
+				</div>
+			</div>
 		);
 	}
 
@@ -50,7 +54,7 @@ export function VideoGrid({ videos, type, error, isLoading }: VideoGridProps) {
 	}
 
 	if (!videos || !videos.length) {
-		return <Text c='dimmed'>No videos available yet.</Text>;
+		return <p className='text-gray-500'>No videos available yet.</p>;
 	}
 
 	const handleClose = () => {
@@ -59,13 +63,13 @@ export function VideoGrid({ videos, type, error, isLoading }: VideoGridProps) {
 	};
 
 	const handleNext = () => {
-		setSelectedIndex((current) => 
+		setSelectedIndex((current) =>
 			current < videos.length - 1 ? current + 1 : 0
 		);
 	};
 
 	const handlePrevious = () => {
-		setSelectedIndex((current) => 
+		setSelectedIndex((current) =>
 			current > 0 ? current - 1 : videos.length - 1
 		);
 	};
@@ -90,7 +94,7 @@ export function VideoGrid({ videos, type, error, isLoading }: VideoGridProps) {
 								}
 								alt={video.Text || 'Video thumbnail'}
 								fill
-								sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+								sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
 								className='livethumb'
 								priority
 								onError={(e: any) => {
@@ -99,9 +103,7 @@ export function VideoGrid({ videos, type, error, isLoading }: VideoGridProps) {
 									target.src = DEFAULT_THUMBNAIL;
 								}}
 							/>
-							<div className='vidtitle'>
-								{video.Text || 'Untitled Video'}
-							</div>
+							<div className='vidtitle'>{video.Text || 'Untitled Video'}</div>
 						</div>
 					</button>
 				))}
