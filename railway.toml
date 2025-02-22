@@ -4,6 +4,6 @@ buildCommand = "cd cms && npm ci && npm run build"
 
 [deploy]
 startCommand = "cd cms && npm run start"
-healthcheckPath = "/_health"
-healthcheckTimeout = 100
+healthcheckPath = "/api/videos"
+healthcheckTimeout = 180
 restartPolicyType = "on_failure" 
