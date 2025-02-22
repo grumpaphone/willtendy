@@ -7,7 +7,7 @@ module.exports = ({ env }) => ({
 			database: env('DATABASE_NAME', 'railway'),
 			user: env('DATABASE_USERNAME', 'postgres'),
 			password: env('DATABASE_PASSWORD', 'password'),
-			ssl: env.bool('DATABASE_SSL', true),
+			ssl: env.bool('DATABASE_SSL', false),
 			schema: env('DATABASE_SCHEMA', 'public'),
 		},
 		debug: false,
