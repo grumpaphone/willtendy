@@ -1,9 +1,13 @@
 const parse = require('pg-connection-string').parse;
 
 module.exports = ({ env }) => {
+	console.log('Current NODE_ENV:', process.env.NODE_ENV);
+	console.log('Current ENV_PATH:', process.env.ENV_PATH);
+
 	let dbUrl = env('DATABASE_URL');
 
 	console.log('Raw DATABASE_URL:', dbUrl);
+	console.log('Database SSL enabled:', env('DATABASE_SSL'));
 
 	if (!dbUrl) {
 		throw new Error(
@@ -33,7 +37,8 @@ module.exports = ({ env }) => {
 		port: portNumber,
 		database,
 		user,
-	}); // logging non-sensitive info
+		ssl: true,
+	});
 
 	return {
 		connection: {
@@ -48,7 +53,7 @@ module.exports = ({ env }) => {
 					rejectUnauthorized: false,
 				},
 			},
-			debug: false,
+			debug: true, // Enable debug mode temporarily
 		},
 	};
 };

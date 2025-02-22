@@ -3,11 +3,12 @@ builder = "nixpacks"
 buildCommand = "cd cms && NODE_ENV=production npm ci && npm run build"
 
 [deploy]
-startCommand = "cd cms && NODE_ENV=production npm run start"
+startCommand = "cd cms && NODE_ENV=production ENV_PATH=.env.production npm run start"
 healthcheckPath = "/health"
 healthcheckPort = "8080"
 healthcheckTimeout = 60
 restartPolicyType = "on_failure"
 
 [deploy.env]
-NODE_ENV = "production" 
+NODE_ENV = "production"
+ENV_PATH = ".env.production" 
