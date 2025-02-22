@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "videos",
+  "info": {
+    "singularName": "video",
+    "pluralName": "videos",
+    "displayName": "Video",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "Text": {
+      "type": "string"
+    },
+    "Slug": {
+      "type": "string"
+    },
+    "URL": {
+      "type": "string"
+    },
+    "Thumbnail": {
+      "type": "string"
+    },
+    "Order": {
+      "type": "integer"
+    },
+    "Created": {
+      "type": "datetime"
+    },
+    "Uploaded": {
+      "type": "datetime"
+    },
+    "Published": {
+      "type": "datetime"
+    },
+    "Type": {
+      "type": "enumeration",
+      "enum": [
+        "live",
+        "playing_along"
+      ]
+    }
+  }
+}

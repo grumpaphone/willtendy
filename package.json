@@ -1,0 +1,17 @@
+{
+	"name": "willtendy",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"start": "./start.sh",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"dependencies": {
+		"@tabler/icons-react": "^3.30.0",
+		"concurrently": "^8.2.2"
+	}
+}
