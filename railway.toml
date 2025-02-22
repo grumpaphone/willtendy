@@ -4,11 +4,7 @@ buildCommand = "cd cms && npm ci && npm run build"
 
 [deploy]
 startCommand = "cd cms && npm run start"
-
-[deploy.healthcheck]
-path = "/health"
-port = "8080"
-interval = "15s"
-timeout = "5s"
-grace_period = "30s"
-retries = 3 
+healthcheckPath = "/health"
+healthcheckPort = "8080"
+healthcheckTimeout = 60
+restartPolicyType = "on_failure" 

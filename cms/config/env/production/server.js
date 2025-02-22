@@ -1,15 +1,17 @@
 const http = require('http');
 
 // Create a basic health check server
-http.createServer((_, res) => {
-	res.writeHead(200);
-	res.end('OK');
-}).listen(8080);
+http
+	.createServer((_, res) => {
+		res.writeHead(200);
+		res.end('OK');
+	})
+	.listen(8080);
 
 module.exports = ({ env }) => ({
 	host: env('HOST', '0.0.0.0'),
 	port: env.int('PORT', 1337),
-	url: env('RAILWAY_STATIC_URL', 'https://willtendy-production.up.railway.app'),
+	url: `https://${env('RAILWAY_PUBLIC_DOMAIN')}`,
 	app: {
 		keys: env.array('APP_KEYS'),
 	},
