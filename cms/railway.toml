@@ -4,10 +4,12 @@ buildCommand = "npm ci && npm run build"
 
 [deploy]
 startCommand = "npm run start"
-healthcheckPath = "/admin/login"
+healthcheckPath = "/admin"
+healthcheckPort = 1337
 healthcheckTimeout = 100
 restartPolicyType = "on-failure"
 numReplicas = 1
 
 [deploy.envVars]
-NODE_ENV = "production" 
+NODE_ENV = "production"
+PORT = "1337" 
