@@ -11,9 +11,15 @@ npm run strapi database:rebuild --force
 """
 
 [deploy]
-startCommand = "pwd && ls -la && cd cms && NODE_ENV=production npm run strapi start"
+startCommand = """
+pwd && ls -la &&
+echo 'Starting Strapi...' &&
+NODE_ENV=production npm run strapi start
+"""
 healthcheckPath = "/health"
 healthcheckTimeout = 180
+healthcheckInterval = 15
+healthcheckInitialDelay = 30
 restartPolicyType = "on-failure"
 numReplicas = 1
 
@@ -22,4 +28,6 @@ NODE_ENV = "production"
 APP_KEYS = "testKey1,testKey2"
 API_TOKEN_SALT = "testsalt"
 ADMIN_JWT_SECRET = "testjwt"
-JWT_SECRET = "testjwtsecret" 
+JWT_SECRET = "testjwtsecret"
+HOST = "0.0.0.0"
+PORT = "1337" 
