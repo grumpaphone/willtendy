@@ -19,55 +19,61 @@ module.exports = ({ env }) => {
 	});
 
 	// Ensure we're using postgres client when DATABASE_URL is provided
-	const client = env(
-		'DATABASE_CLIENT',
-		process.env.DATABASE_URL ? 'postgres' : 'sqlite'
-	);
+	const client = env('DATABASE_CLIENT', process.env.DATABASE_URL ? 'postgres' : 'sqlite');
 
 	if (client === 'postgres') {
 		console.log('[DEBUG] Using Postgres configuration');
 		return {
-			connection: {
-				client,
-				connection: {
-					connectionString: env('DATABASE_URL'),
-					host: env('DATABASE_HOST', process.env.PGHOST),
-					port: env.int('DATABASE_PORT', process.env.PGPORT),
-					database: env('DATABASE_NAME', process.env.POSTGRES_DB),
-					user: env('DATABASE_USERNAME', process.env.POSTGRES_USER),
-					password: env('DATABASE_PASSWORD', process.env.POSTGRES_PASSWORD),
-					ssl: env.bool('DATABASE_SSL', true) && {
-						rejectUnauthorized: env.bool(
-							'DATABASE_SSL_REJECT_UNAUTHORIZED',
-							false
-						),
+			defaultConnection: 'default',
+			connections: {
+				default: {
+					connector: 'bookshelf',
+					settings: {
+						client: 'postgres',
+						host: env('DATABASE_HOST', process.env.PGHOST),
+						port: env.int('DATABASE_PORT', process.env.PGPORT),
+						database: env('DATABASE_NAME', process.env.POSTGRES_DB),
+						username: env('DATABASE_USERNAME', process.env.POSTGRES_USER),
+						password: env('DATABASE_PASSWORD', process.env.POSTGRES_PASSWORD),
+						ssl: env.bool('DATABASE_SSL', true) ? {
+							rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', false)
+						} : false,
+						schema: env('DATABASE_SCHEMA', 'public')
 					},
-					schema: env('DATABASE_SCHEMA', 'public'),
-				},
-				pool: {
-					min: env.int('DATABASE_POOL_MIN', 2),
-					max: env.int('DATABASE_POOL_MAX', 10),
-				},
-				debug: env.bool('DATABASE_DEBUG', false),
-			},
+					options: {
+						pool: {
+							min: env.int('DATABASE_POOL_MIN', 2),
+							max: env.int('DATABASE_POOL_MAX', 10)
+						},
+						debug: env.bool('DATABASE_DEBUG', false),
+						useNullAsDefault: true
+					}
+				}
+			}
 		};
 	}
 
 	// Fallback to SQLite for development
 	console.log('[DEBUG] Using SQLite configuration');
 	return {
-		connection: {
-			client,
-			connection: {
-				filename: path.join(
-					__dirname,
-					'..',
-					'..',
-					env('DATABASE_FILENAME', '.tmp/data.db')
-				),
-			},
-			useNullAsDefault: true,
-			debug: env.bool('DATABASE_DEBUG', false),
-		},
+		defaultConnection: 'default',
+		connections: {
+			default: {
+				connector: 'bookshelf',
+				settings: {
+					client: 'sqlite',
+					filename: path.join(
+						__dirname,
+						'..',
+						'..',
+						env('DATABASE_FILENAME', '.tmp/data.db')
+					)
+				},
+				options: {
+					useNullAsDefault: true,
+					debug: env.bool('DATABASE_DEBUG', false)
+				}
+			}
+		}
 	};
 };
