@@ -1,94 +1,31 @@
-'use client';
-
 import { getPlayingAlongVideoBySlug } from '@/lib/api';
 import { notFound } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 export const revalidate = 3600; // Revalidate every hour
+export const dynamic = 'force-static'; // Force full static generation for GitHub Pages
 
-interface Props {
-	params: {
-		slug: string;
-	};
+// Generate static params for export mode. Replace the hardcoded value with dynamic data if available.
+export async function generateStaticParams() {
+	// TODO: Replace with actual fetching of available slugs, e.g., await getAllPlayingAlongVideoSlugs();
+	return [{ slug: 'example-slug' }];
 }
 
-export default function PlayingAlongVideoPage({ params }: Props) {
-	const [video, setVideo] = useState<any>(null);
-	const [error, setError] = useState<string>('');
-	const [loading, setLoading] = useState(true);
-
-	useEffect(() => {
-		async function loadVideo() {
-			try {
-				console.log(
-					'PlayingAlongVideoPage: Loading video with slug:',
-					params.slug
-				);
-				const videoData = await getPlayingAlongVideoBySlug(params.slug);
-				console.log('PlayingAlongVideoPage: Loaded video:', videoData);
-
-				if (!videoData) {
-					console.log('PlayingAlongVideoPage: Video not found');
-					notFound();
-					return;
-				}
-
-				setVideo(videoData);
-			} catch (err) {
-				console.error('PlayingAlongVideoPage: Error loading video:', err);
-				setError('Failed to load video. Please try again later.');
-			} finally {
-				setLoading(false);
-			}
-		}
-
-		loadVideo();
-	}, [params.slug]);
-
-	if (loading) {
-		return (
-			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
-				<h1 className='text-2xl font-bold mb-8'>Loading...</h1>
-			</div>
-		);
-	}
-
-	if (error) {
-		return (
-			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
-				<div className='rounded-md bg-red-50 p-4 mb-8'>
-					<div className='flex'>
-						<div className='ml-3'>
-							<h3 className='text-sm font-medium text-red-800'>Error</h3>
-							<div className='mt-2 text-sm text-red-700'>{error}</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		);
-	}
+// Server component that fetches video data at build time
+export default async function PlayingAlongVideoPage({ params }: { params: { slug: string } }) {
+	const video = await getPlayingAlongVideoBySlug(params.slug);
 
 	if (!video) {
-		return notFound();
+		notFound();
+		return null;
 	}
 
-	// Extract video ID from Vimeo URL
-	const vimeoId = video.URL.match(/vimeo\.com\/(\d+)/)?.[1];
-	if (!vimeoId) {
+	const match = video.URL.match(/vimeo\.com\/(\d+)/);
+	if (!match) {
 		console.error('PlayingAlongVideoPage: Invalid Vimeo URL:', video.URL);
-		return (
-			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
-				<div className='rounded-md bg-red-50 p-4 mb-8'>
-					<div className='flex'>
-						<div className='ml-3'>
-							<h3 className='text-sm font-medium text-red-800'>Error</h3>
-							<div className='mt-2 text-sm text-red-700'>Invalid video URL</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		);
+		notFound();
+		return null;
 	}
+	const vimeoId = match[1];
 
 	return (
 		<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>

@@ -66,7 +66,9 @@ function transformStrapiVideo(item: any): Video {
 export async function getLiveVideos(): Promise<Video[]> {
 	console.log('API: getLiveVideos: Starting request');
 	try {
-		const response = await fetch(`${API_URL}/api/videos?filters[type][$eq]=live&sort=order:asc`);
+		const response = await fetch(
+			`${API_URL}/api/videos?filters[type][$eq]=live&sort=order:asc`
+		);
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
@@ -82,7 +84,9 @@ export async function getLiveVideos(): Promise<Video[]> {
 export async function getPlayingAlongVideos(): Promise<Video[]> {
 	console.log('API: getPlayingAlongVideos: Starting request');
 	try {
-		const response = await fetch(`${API_URL}/api/videos?filters[type][$eq]=playing_along&sort=order:asc`);
+		const response = await fetch(
+			`${API_URL}/api/videos?filters[type][$eq]=playing_along&sort=order:asc`
+		);
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
@@ -98,7 +102,9 @@ export async function getPlayingAlongVideos(): Promise<Video[]> {
 export async function getLiveVideoBySlug(slug: string): Promise<Video | null> {
 	console.log('API: getLiveVideoBySlug: Starting request for slug:', slug);
 	try {
-		const response = await fetch(`${API_URL}/api/videos?filters[type][$eq]=live&filters[slug][$eq]=${slug}`);
+		const response = await fetch(
+			`${API_URL}/api/videos?filters[type][$eq]=live&filters[slug][$eq]=${slug}`
+		);
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
@@ -111,18 +117,18 @@ export async function getLiveVideoBySlug(slug: string): Promise<Video | null> {
 	}
 }
 
-export async function getPlayingAlongVideoBySlug(slug: string): Promise<Video | null> {
-	console.log('API: getPlayingAlongVideoBySlug: Starting request for slug:', slug);
-	try {
-		const response = await fetch(`${API_URL}/api/videos?filters[type][$eq]=playing_along&filters[slug][$eq]=${slug}`);
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-		const data: StrapiResponse = await response.json();
-		console.log('API: Raw response data:', JSON.stringify(data, null, 2));
-		return data.data.length > 0 ? transformStrapiVideo(data.data[0]) : null;
-	} catch (error) {
-		console.error('API: Error in getPlayingAlongVideoBySlug:', error);
-		return null;
+export async function getPlayingAlongVideoBySlug(slug: string): Promise<any> {
+	// Use the public Strapi API URL. This environment variable should be set in your build environment.
+	const apiUrl =
+		process.env.NEXT_PUBLIC_STRAPI_API_URL ||
+		'https://your-strapi-instance.com';
+	const res = await fetch(`${apiUrl}/playing-alongs?slug=${slug}`);
+	if (!res.ok) {
+		throw new Error(
+			`Failed to fetch video with slug ${slug}: ${res.statusText}`
+		);
 	}
+	const data = await res.json();
+	// Assuming data is an array of videos
+	return data && data.length > 0 ? data[0] : null;
 }
