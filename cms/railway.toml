@@ -1,13 +1,17 @@
 [build]
 provider = "node"
-buildCommand = "npm ci && npm run build"
+buildCommand = "pwd && ls -la && npm ci && npm run build"
 
 [deploy]
-startCommand = "npm run start"
-healthcheckPath = "/_health"
-healthcheckTimeout = 100
+startCommand = "pwd && ls -la && cd cms && npm run start"
+healthcheckPath = "/health"
+healthcheckTimeout = 180
 restartPolicyType = "on-failure"
 numReplicas = 1
 
 [deploy.envVars]
-NODE_ENV = "production" 
+NODE_ENV = "production"
+APP_KEYS = "testKey1,testKey2"
+API_TOKEN_SALT = "testsalt"
+ADMIN_JWT_SECRET = "testjwt"
+JWT_SECRET = "testjwtsecret" 
