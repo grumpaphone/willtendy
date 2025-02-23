@@ -1,9 +1,9 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd cms && NODE_ENV=production npm ci && npm run build"
+buildCommand = "cd cms && npm ci && npm run build"
 
 [deploy]
-startCommand = "cd cms && NODE_ENV=production ENV_PATH=.env.production npm run start"
+startCommand = "cd cms && npm run start"
 healthcheckPath = "/health"
 healthcheckPort = "8080"
 healthcheckTimeout = 60
