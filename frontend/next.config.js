@@ -2,7 +2,10 @@
 const nextConfig = {
 	reactStrictMode: true,
 	swcMinify: true,
+	output: 'export',
+	basePath: process.env.NODE_ENV === 'production' ? '/willtendy' : '',
 	images: {
+		unoptimized: true,
 		remotePatterns: [
 			{
 				protocol: 'https',
@@ -20,15 +23,8 @@ const nextConfig = {
 				pathname: '/**',
 			},
 			{
-				protocol: 'http',
-				hostname: 'localhost',
-				port: '1337',
-				pathname: '/**',
-			},
-			{
-				protocol: 'http',
-				hostname: '127.0.0.1',
-				port: '1337',
+				protocol: 'https',
+				hostname: 'willtendy-production.up.railway.app',
 				pathname: '/**',
 			},
 		],
