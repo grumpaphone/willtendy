@@ -4,41 +4,24 @@ module.exports = ({ env }) => {
 	// Log all relevant environment variables for debugging
 	console.log('=== Database Configuration Debug ===');
 	console.log('NODE_ENV:', process.env.NODE_ENV);
-	console.log('DATABASE_URL:', process.env.DATABASE_URL);
-	console.log('DATABASE_CLIENT:', process.env.DATABASE_CLIENT);
 	console.log('PGHOST:', process.env.PGHOST);
-	console.log(
-		'Available env variables:',
-		Object.keys(process.env).filter(
-			(key) =>
-				key.includes('PG') ||
-				key.includes('DATABASE') ||
-				key.includes('RAILWAY')
-		)
-	);
-
-	// Get the DATABASE_URL from Railway
-	const databaseUrl = env('DATABASE_URL');
-
-	if (!databaseUrl) {
-		console.error('DATABASE_URL is not set!');
-		throw new Error('DATABASE_URL environment variable is required');
-	}
-
-	// Parse the connection string
-	const config = parse(databaseUrl);
-	console.log('Parsed database config:', {
-		host: config.host,
-		port: config.port,
-		database: config.database,
-		user: config.user,
-		// password omitted for security
-	});
+	console.log('PGPORT:', process.env.PGPORT);
+	console.log('PGDATABASE:', process.env.PGDATABASE);
+	console.log('PGUSER:', process.env.PGUSER);
 
 	return {
 		connection: {
 			client: 'postgres',
-			connection: databaseUrl,
+			connection: {
+				host: env('PGHOST', 'postgres.railway.internal'),
+				port: env.int('PGPORT', 5432),
+				database: env('PGDATABASE', 'railway'),
+				user: env('PGUSER', 'postgres'),
+				password: env('PGPASSWORD'),
+				ssl: {
+					rejectUnauthorized: false,
+				},
+			},
 			debug: true,
 			pool: {
 				min: 0,
