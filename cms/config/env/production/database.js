@@ -10,20 +10,17 @@ module.exports = ({ env }) => {
 		throw new Error('DATABASE_URL is required in production');
 	}
 
-	const config = parse(process.env.DATABASE_URL);
-
 	return {
 		connection: {
 			client: 'postgres',
-			connection: {
-				...config,
-				ssl: { rejectUnauthorized: false },
-			},
+			connection: process.env.DATABASE_URL,
+			debug: false,
+			acquireConnectionTimeout: 60000,
 			pool: {
 				min: 0,
 				max: 5,
-				acquireTimeoutMillis: 60000,
 				createTimeoutMillis: 30000,
+				acquireTimeoutMillis: 60000,
 				idleTimeoutMillis: 30000,
 				reapIntervalMillis: 1000,
 				createRetryIntervalMillis: 100,
