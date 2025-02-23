@@ -1,9 +1,17 @@
 [build]
 provider = "node"
-buildCommand = "pwd && ls -la && npm ci && npm run build"
+buildCommand = """
+pwd && ls -la && 
+echo 'Installing dependencies...' && 
+npm ci && 
+echo 'Building Strapi...' && 
+npm run build && 
+echo 'Initializing database...' && 
+npm run strapi database:rebuild --force
+"""
 
 [deploy]
-startCommand = "pwd && ls -la && cd cms && npm run start"
+startCommand = "pwd && ls -la && cd cms && NODE_ENV=production npm run strapi start"
 healthcheckPath = "/health"
 healthcheckTimeout = 180
 restartPolicyType = "on-failure"
