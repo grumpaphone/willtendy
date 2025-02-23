@@ -1,33 +1,36 @@
 const parse = require('pg-connection-string').parse;
 
 module.exports = ({ env }) => {
-	// Log all relevant environment variables for debugging
+	// Log relevant environment variables for debugging
 	console.log('=== Database Configuration Debug ===');
 	console.log('NODE_ENV:', process.env.NODE_ENV);
-	console.log('PGHOST:', process.env.PGHOST);
-	console.log('PGPORT:', process.env.PGPORT);
-	console.log('PGDATABASE:', process.env.PGDATABASE);
-	console.log('PGUSER:', process.env.PGUSER);
+	console.log('DATABASE_URL:', process.env.DATABASE_URL);
+
+	if (!process.env.DATABASE_URL) {
+		throw new Error('DATABASE_URL is required in production');
+	}
+
+	const parsed = parse(process.env.DATABASE_URL);
 
 	return {
 		connection: {
 			client: 'postgres',
 			connection: {
-				host: env('PGHOST', 'postgres.railway.internal'),
-				port: env.int('PGPORT', 5432),
-				database: env('PGDATABASE', 'railway'),
-				user: env('PGUSER', 'postgres'),
-				password: env('PGPASSWORD'),
+				host: parsed.host,
+				port: parsed.port,
+				database: parsed.database,
+				user: parsed.user,
+				password: parsed.password,
 				ssl: {
 					rejectUnauthorized: false,
 				},
 			},
-			debug: true,
+			debug: false,
 			pool: {
 				min: 0,
 				max: 10,
-				acquireTimeoutMillis: 5000,
-				createTimeoutMillis: 5000,
+				acquireTimeoutMillis: 30000,
+				createTimeoutMillis: 30000,
 				destroyTimeoutMillis: 5000,
 				idleTimeoutMillis: 30000,
 				reapIntervalMillis: 1000,
