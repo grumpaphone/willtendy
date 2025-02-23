@@ -1,13 +1,13 @@
 'use client';
 
 import { VideoGrid } from '@/components/VideoGrid';
-import { getPlayingAlongVideos } from '@/lib/api';
+import { getPlayingAlongVideos, type Video } from '@/lib/api';
 import { useState, useEffect } from 'react';
 
 export const revalidate = 3600; // Revalidate every hour
 
 export default function PlayingAlongPage() {
-	const [videos, setVideos] = useState([]);
+	const [videos, setVideos] = useState<Video[]>([]);
 	const [error, setError] = useState('');
 	const [isLoading, setIsLoading] = useState(true);
 

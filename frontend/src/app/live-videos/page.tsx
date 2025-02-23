@@ -1,13 +1,13 @@
 'use client';
 
 import { VideoGrid } from '@/components/VideoGrid';
-import { getLiveVideos } from '@/lib/api';
+import { getLiveVideos, type Video } from '@/lib/api';
 import { useState, useEffect } from 'react';
 
 export const revalidate = 3600; // Revalidate every hour
 
 export default function LiveVideosPage() {
-	const [videos, setVideos] = useState([]);
+	const [videos, setVideos] = useState<Video[]>([]);
 	const [error, setError] = useState('');
 	const [isLoading, setIsLoading] = useState(true);
 
