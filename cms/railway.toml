@@ -1,4 +1,5 @@
 [build]
+provider = "node"
 buildCommand = "npm ci && npm run build"
 
 [deploy]
