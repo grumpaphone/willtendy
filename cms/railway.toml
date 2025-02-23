@@ -1,5 +1,4 @@
 [build]
-builder = "nixpacks"
 buildCommand = "npm ci && npm run build"
 
 [deploy]
@@ -8,13 +7,6 @@ healthcheckPath = "/admin/login"
 healthcheckTimeout = 100
 restartPolicyType = "on-failure"
 numReplicas = 1
-
-[nixpacks]
-plan = [
-  { name = "install", command = "npm ci" },
-  { name = "build", command = "npm run build" },
-  { name = "start", command = "npm run start" }
-]
 
 [deploy.envVars]
 NODE_ENV = "production" 
