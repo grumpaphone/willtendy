@@ -10,13 +10,53 @@ module.exports = ({ env }) => {
 	console.log('[DEBUG] Database Environment Variables:', {
 		DATABASE_URL: env('DATABASE_URL'),
 		NODE_ENV: process.env.NODE_ENV,
+		DATABASE_CLIENT: process.env.DATABASE_CLIENT,
+		PGHOST: process.env.PGHOST,
+		PGPORT: process.env.PGPORT,
+		PGDATABASE: process.env.PGDATABASE,
+		PGUSER: process.env.PGUSER,
+		DATABASE_SSL: process.env.DATABASE_SSL,
 	});
+
+	const client = env('DATABASE_CLIENT', 'postgres');
+
+	const connections = {
+		postgres: {
+			connection: {
+				host: env('PGHOST'),
+				port: env.int('PGPORT'),
+				database: env('PGDATABASE'),
+				user: env('PGUSER'),
+				password: env('PGPASSWORD'),
+				ssl:
+					env('DATABASE_SSL') === 'true'
+						? {
+								rejectUnauthorized: false,
+							}
+						: false,
+				debug: false,
+			},
+			pool: {
+				min: 0,
+				max: 10,
+				acquireTimeoutMillis: 60000,
+				createTimeoutMillis: 30000,
+				idleTimeoutMillis: 30000,
+				reapIntervalMillis: 1000,
+				createRetryIntervalMillis: 100,
+			},
+		},
+	};
 
 	return {
 		connection: {
-			client: 'postgres',
-			connection: env('DATABASE_URL'),
-			debug: false,
+			client,
+			...connections[client],
+			acquireConnectionTimeout: 60000,
+			pool: {
+				min: 0,
+				max: 10,
+			},
 		},
 	};
 };
