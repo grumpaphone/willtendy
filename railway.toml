@@ -1,15 +1,19 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd cms && npm ci && npm run build"
+buildCommand = "npm ci --prefix cms && npm run build --prefix cms"
 
 [deploy]
-startCommand = "cd cms && npm run start"
+startCommand = "npm run start --prefix cms"
 healthcheckPath = "/"
 healthcheckTimeout = 60
 healthcheckInterval = 30
 healthcheckInitialDelay = 30
 restartPolicyType = "on-failure"
 numReplicas = 1
+
+[nixpacks]
+start = "npm run start --prefix cms"
+rootDir = "cms"
 
 [deploy.envVars]
 NODE_ENV = "production"
