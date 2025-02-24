@@ -8,9 +8,9 @@ npm ci &&
 echo 'Verifying installation...' &&
 ls -la node_modules/.bin &&
 echo 'Building Strapi...' && 
-./node_modules/.bin/strapi build &&
+NODE_ENV=production ./node_modules/.bin/strapi build &&
 echo 'Initializing database...' && 
-./node_modules/.bin/strapi database:rebuild --force
+NODE_ENV=production ./node_modules/.bin/strapi database:rebuild --force
 """
 
 [deploy]
@@ -20,12 +20,12 @@ pwd && ls -la &&
 echo 'Verifying Strapi installation...' &&
 ls -la node_modules/.bin &&
 echo 'Starting Strapi...' &&
-NODE_ENV=production ./node_modules/.bin/strapi start
+NODE_ENV=production DEBUG=strapi:* ./node_modules/.bin/strapi start
 """
-healthcheckPath = "/"
+healthcheckPath = "/health"
 healthcheckTimeout = 180
-healthcheckInterval = 15
-healthcheckInitialDelay = 30
+healthcheckInterval = 30
+healthcheckInitialDelay = 60
 restartPolicyType = "on-failure"
 numReplicas = 1
 
@@ -37,4 +37,5 @@ ADMIN_JWT_SECRET = "testjwt"
 JWT_SECRET = "testjwtsecret"
 HOST = "0.0.0.0"
 PORT = "1337"
-DATABASE_CLIENT = "postgres" 
+DATABASE_CLIENT = "postgres"
+DATABASE_SSL = "false" 
