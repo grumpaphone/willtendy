@@ -1,34 +1,29 @@
 [build]
-provider = "node"
-buildCommand = """
-cd cms &&
-pwd && ls -la && 
-echo 'Installing dependencies...' && 
-npm ci && 
-echo 'Building Strapi...' && 
-NODE_ENV=production npm run build
-"""
+builder = "nixpacks"
+buildCommand = "cd cms && npm ci && npm run build"
 
 [deploy]
-startCommand = "cd cms && NODE_ENV=production npm run start"
+startCommand = "cd cms && npm run start"
 healthcheckPath = "/"
-healthcheckTimeout = 180
+healthcheckTimeout = 60
 healthcheckInterval = 30
-healthcheckInitialDelay = 60
+healthcheckInitialDelay = 30
 restartPolicyType = "on-failure"
 numReplicas = 1
 
 [deploy.envVars]
 NODE_ENV = "production"
+PORT = "1337"
+HOST = "0.0.0.0"
+DATABASE_CLIENT = "postgres"
+DATABASE_SSL = "true"
+
+[deploy.envVars]
 APP_KEYS = "cRPK/MkWbI/ZNLNzhLt3Je31Io1gLv5lBOiRmLeBd9Y=,ezobJaE96ukIUSfOAZFS2Az2Vw4k4b++EX7NitxJ3ps=,MFpOkwqBElVXsn+GYVcq7FXoHJTojjgL8jQgfr+C7mw=,MMjs9W6W/onIaOt3Ds3xsot1kGaWCjrQd3kmsgtaPaU="
 API_TOKEN_SALT = "ygEuGNwfBAq3GPeQpjKstKVT8556tMIOLIV/R/U42WY="
 ADMIN_JWT_SECRET = "wuRmkv0+HqOihRD7T0AURwWZeMa7VmW1tYmT5A9BhhA="
 JWT_SECRET = "thrg44QCdb45FYdK/0Sj83JGKanM5kN+DY5T4I0ifos=="
 TRANSFER_TOKEN_SALT = "1nW+1dVsRYQOstzV7zRNNjOVc/wxSJi5RMzkQIF8uj8="
-HOST = "0.0.0.0"
-PORT = "1337"
-DATABASE_CLIENT = "postgres"
-DATABASE_SSL = "true"
 DATABASE_URL = "postgresql://postgres:BbIbbyQYmoGBsFuHpsbXjodevszruGtk@postgres.railway.internal:5432/railway"
 STRAPI_ADMIN_BACKEND_URL = "https://wiltendy-production.up.railway.app"
 CORS_ORIGIN = "https://*.railway.app,https://wiltendy.github.io" 
