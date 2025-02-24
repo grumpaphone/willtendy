@@ -1,9 +1,9 @@
 [build]
 builder = "nixpacks"
-buildCommand = "npm ci --prefix cms && npm run build --prefix cms"
+buildCommand = "cd cms && npm cache clean --force && rm -rf node_modules package-lock.json && npm install && npm run build"
 
 [deploy]
-startCommand = "npm run start --prefix cms"
+startCommand = "cd cms && npm run start"
 healthcheckPath = "/"
 healthcheckTimeout = 60
 healthcheckInterval = 30
@@ -12,9 +12,8 @@ restartPolicyType = "on-failure"
 numReplicas = 1
 
 [nixpacks]
-start = "npm run start --prefix cms"
-rootDir = "cms"
 node-version = "18.19.0"
+rootDir = "cms"
 
 [deploy.envVars]
 NODE_ENV = "production"
