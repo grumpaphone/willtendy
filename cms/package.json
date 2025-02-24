@@ -6,8 +6,8 @@
 	"main": "server.js",
 	"scripts": {
 		"develop": "strapi develop",
-		"start": "cross-env NODE_ENV=production strapi start",
-		"build": "cross-env NODE_ENV=production strapi build",
+		"start": "strapi start",
+		"build": "strapi build",
 		"strapi": "strapi"
 	},
 	"dependencies": {
