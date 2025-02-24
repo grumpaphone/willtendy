@@ -1,26 +1,22 @@
 [build]
 provider = "node"
 buildCommand = """
-cd cms &&
 pwd && ls -la && 
 echo 'Installing dependencies...' && 
 npm ci && 
 echo 'Verifying installation...' &&
 ls -la node_modules/.bin &&
 echo 'Building Strapi...' && 
-NODE_ENV=production ./node_modules/.bin/strapi build &&
+NODE_ENV=production npm run build &&
 echo 'Initializing database...' && 
-NODE_ENV=production ./node_modules/.bin/strapi database:rebuild --force
+NODE_ENV=production npm run strapi database:rebuild -- --force
 """
 
 [deploy]
 startCommand = """
-cd cms &&
 pwd && ls -la &&
-echo 'Verifying Strapi installation...' &&
-ls -la node_modules/.bin &&
 echo 'Starting Strapi...' &&
-NODE_ENV=production DEBUG=strapi:* ./node_modules/.bin/strapi start
+NODE_ENV=production DEBUG=strapi:* npm run start
 """
 healthcheckPath = "/health"
 healthcheckTimeout = 180
