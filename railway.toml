@@ -1,6 +1,6 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd cms && npm cache clean --force && rm -rf node_modules package-lock.json && npm install && npm run build"
+buildCommand = "cd cms && rm -rf .npm && npm cache clean --force && rm -rf node_modules package-lock.json && NODE_ENV=production npm install --no-audit --prefer-offline=false && npm run build"
 
 [deploy]
 startCommand = "cd cms && npm run start"
@@ -14,6 +14,10 @@ numReplicas = 1
 [nixpacks]
 node-version = "18.19.0"
 rootDir = "cms"
+plan = [
+    "cache.node = false",
+    "cache.npm = false"
+]
 
 [deploy.envVars]
 NODE_ENV = "production"
