@@ -1,6 +1,6 @@
 [build]
 builder = "nixpacks"
-buildCommand = "cd cms && rm -rf .npm && npm cache clean --force && rm -rf node_modules package-lock.json && NODE_ENV=production npm install --no-audit --prefer-offline=false && npm run build"
+buildCommand = "cd cms && rm -rf .npm && npm cache clean --force && rm -rf node_modules package-lock.json && NODE_ENV=production npm install --legacy-peer-deps --no-audit --prefer-offline=false && npm run build"
 
 [deploy]
 startCommand = "cd cms && npm run start"
