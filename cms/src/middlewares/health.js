@@ -1,39 +1,73 @@
+// Add a simple in-memory cache for health checks
+let healthCache = {
+	status: null,
+	timestamp: 0,
+	ttl: 30000 // 30 seconds
+};
+
 module.exports = (config, { strapi }) => {
 	return async (ctx, next) => {
 		if (ctx.path === '/health') {
-			console.log('[Health Check] Received health check request');
+			// Use cached result if available and fresh
+			const now = Date.now();
+			if (healthCache.status && (now - healthCache.timestamp < healthCache.ttl)) {
+				ctx.status = healthCache.status === 'healthy' ? 200 : 503;
+				ctx.body = healthCache.body;
+				return;
+			}
+
 			try {
 				// Check database connection
-				console.log('[Health Check] Testing database connection...');
+				if (process.env.NODE_ENV !== 'production') {
+					console.log('[Health Check] Testing database connection...');
+				}
 				await strapi.db.connection.raw('SELECT 1');
 
-				// Check server status
-				console.log('[Health Check] Checking server status...');
+				// Server info
 				const serverInfo = {
 					timestamp: new Date().toISOString(),
 					uptime: process.uptime(),
 					environment: process.env.NODE_ENV,
-					port: process.env.PORT,
-					host: process.env.HOST,
 				};
 
-				console.log(
-					'[Health Check] All checks passed, returning healthy status'
-				);
-				ctx.status = 200;
-				ctx.body = {
+				// Update cache
+				healthCache = {
 					status: 'healthy',
-					...serverInfo,
-					database: 'connected',
+					timestamp: now,
+					body: {
+						status: 'healthy',
+						...serverInfo,
+						database: 'connected',
+					}
 				};
+
+				if (process.env.NODE_ENV !== 'production') {
+					console.log('[Health Check] All checks passed, returning healthy status');
+				}
+				
+				ctx.status = 200;
+				ctx.body = healthCache.body;
 			} catch (error) {
-				console.error('[Health Check] Failed:', error);
-				ctx.status = 503;
-				ctx.body = {
+				// Only log in production when health check fails
+				if (process.env.NODE_ENV === 'production') {
+					console.error('[Health Check] Failed:', error);
+				} else {
+					console.error('[Health Check] Failed:', error);
+				}
+
+				// Update cache with error status
+				healthCache = {
 					status: 'unhealthy',
-					timestamp: new Date().toISOString(),
-					error: error.message,
+					timestamp: now,
+					body: {
+						status: 'unhealthy',
+						timestamp: new Date().toISOString(),
+						error: error.message,
+					}
 				};
+
+				ctx.status = 503;
+				ctx.body = healthCache.body;
 			}
 			return;
 		}
