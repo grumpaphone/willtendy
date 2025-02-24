@@ -1,67 +1,39 @@
-'use client';
-
 import Image from 'next/image';
 import { VideoGrid } from '@/components/VideoGrid';
-import { getLiveVideos, getPlayingAlongVideos, type Video } from '@/lib/api';
-import { useState, useEffect } from 'react';
+import { getLiveVideos, getPlayingAlongVideos } from '@/lib/api';
+import { Suspense } from 'react';
 
-export default function Home() {
-	const [liveVideos, setLiveVideos] = useState<Video[]>([]);
-	const [playingAlongVideos, setPlayingAlongVideos] = useState<Video[]>([]);
-	const [error, setError] = useState('');
+// Loading component for Suspense
+function VideoSectionLoading() {
+	return <div className='animate-pulse h-64 bg-gray-200 rounded-md'></div>;
+}
 
-	useEffect(() => {
-		async function fetchData() {
-			try {
-				console.log('Home: Starting to fetch videos...');
-				const [live, playing] = await Promise.all([
-					getLiveVideos(),
-					getPlayingAlongVideos(),
-				]);
+// Error component
+function ErrorDisplay({ message }: { message: string }) {
+	return (
+		<div className='p-4 bg-red-50 text-red-700 rounded-md'>
+			<p>{message}</p>
+		</div>
+	);
+}
 
-				console.log('Home: Raw live videos:', JSON.stringify(live, null, 2));
-				console.log(
-					'Home: Raw playing videos:',
-					JSON.stringify(playing, null, 2)
-				);
+// Server Component for video sections
+async function VideoSection({ type }: { type: 'live' | 'playing' }) {
+	try {
+		const videos =
+			type === 'live' ? await getLiveVideos() : await getPlayingAlongVideos();
 
-				if (!live || !Array.isArray(live)) {
-					console.error('Home: Invalid live videos data:', live);
-					setError('Failed to load live videos. Invalid data format.');
-					return;
-				}
+		return <VideoGrid videos={videos} type={type} />;
+	} catch (error) {
+		return (
+			<ErrorDisplay
+				message={`Failed to load ${type} videos. Please try again later.`}
+			/>
+		);
+	}
+}
 
-				if (!playing || !Array.isArray(playing)) {
-					console.error('Home: Invalid playing videos data:', playing);
-					setError('Failed to load playing along videos. Invalid data format.');
-					return;
-				}
-
-				console.log('Home: Setting state with videos:', {
-					liveCount: live.length,
-					playingCount: playing.length,
-					firstLive: live[0],
-					firstPlaying: playing[0],
-				});
-
-				setLiveVideos(live);
-				setPlayingAlongVideos(playing);
-			} catch (err) {
-				console.error('Home: Error fetching videos:', err);
-				setError('Failed to load videos. Please make sure the CMS is running.');
-			}
-		}
-
-		console.log('Home: Component mounted, calling fetchData');
-		fetchData();
-	}, []);
-
-	console.log('Home: Rendering with state:', {
-		liveVideosCount: liveVideos.length,
-		playingAlongVideosCount: playingAlongVideos.length,
-		hasError: !!error,
-	});
-
+export default async function Home() {
 	return (
 		<div className='section'>
 			<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
@@ -131,13 +103,19 @@ export default function Home() {
 				{/* Live Videos Section */}
 				<div className='intro-wrap'>
 					<h1 className='heading-3'>Live</h1>
-					<VideoGrid videos={liveVideos} type='live' error={error} />
+					<Suspense fallback={<VideoSectionLoading />}>
+						{/* @ts-expect-error Async Server Component */}
+						<VideoSection type='live' />
+					</Suspense>
 				</div>
 
 				{/* Playing Along Section */}
 				<div className='intro-wrap'>
 					<h1 className='heading-3'>Playing Along:</h1>
-					<VideoGrid videos={playingAlongVideos} type='playing' error={error} />
+					<Suspense fallback={<VideoSectionLoading />}>
+						{/* @ts-expect-error Async Server Component */}
+						<VideoSection type='playing' />
+					</Suspense>
 				</div>
 
 				{/* Contact Section */}

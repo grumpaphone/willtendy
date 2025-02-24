@@ -11,7 +11,11 @@ export async function generateStaticParams() {
 }
 
 // Server component that fetches video data at build time
-export default async function PlayingAlongVideoPage({ params }: { params: { slug: string } }) {
+export default async function PlayingAlongVideoPage({
+	params,
+}: {
+	params: { slug: string };
+}) {
 	const video = await getPlayingAlongVideoBySlug(params.slug);
 
 	if (!video) {

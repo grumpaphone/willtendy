@@ -1,31 +1,15 @@
-const API_URL =
-	process.env.NEXT_PUBLIC_API_URL ||
-	'https://willtendy-production.up.railway.app';
-console.log('API: Using URL:', API_URL);
+import {
+	getVideosByType as getSanityVideosByType,
+	getVideoBySlug as getSanityVideoBySlug,
+} from './sanity';
 
-interface StrapiAttributes {
-	text: string;
-	slug: string;
-	url: string;
-	thumbnail: string;
-	type: 'live' | 'playing_along';
-	order: number;
-	createdAt: string;
-	updatedAt: string;
-	publishedAt: string;
-}
-
-interface StrapiDataItem {
-	id: number;
-	attributes: StrapiAttributes;
-}
-
-interface StrapiResponse {
-	data: StrapiDataItem[];
+// Only log in development
+if (process.env.NODE_ENV !== 'production') {
+	console.log('API: Using Sanity.io as CMS');
 }
 
 export interface Video {
-	id: number;
+	id: number | string;
 	Text: string;
 	Slug: string;
 	URL: string;
@@ -37,107 +21,118 @@ export interface Video {
 	Published?: string;
 }
 
-function transformStrapiVideo(item: any): Video {
-	console.log('Raw Strapi item:', JSON.stringify(item, null, 2));
-
+function transformSanityVideo(item: any): Video {
 	if (!item) {
-		console.error('Invalid item:', item);
 		throw new Error('Invalid item');
 	}
 
-	// Handle both direct properties and nested attributes
-	const data = item.attributes || item;
-
-	const video = {
-		id: item.id,
-		Text: data.Text || data.text || '',
-		Slug: data.Slug || data.slug || '',
-		URL: data.URL || data.url || '',
-		Thumbnail: data.Thumbnail || data.thumbnail || '',
-		Type: data.Type || data.type || 'live',
-		Order: data.Order || data.order || 0,
-		Created: data.Created || data.created || data.createdAt || '',
-		Uploaded: data.Uploaded || data.uploaded || data.updatedAt || '',
-		Published: data.Published || data.published || data.publishedAt || '',
+	return {
+		id: item._id || '',
+		Text: item.text || '',
+		Slug: item.slug?.current || '',
+		URL: item.url || '',
+		Thumbnail: item.thumbnail || '',
+		Type: item.type || 'live',
+		Order: item.order || 0,
+		Created: item.created || '',
+		Uploaded: item.uploaded || '',
+		Published: item.published || '',
 	};
-
-	console.log('Transformed video:', JSON.stringify(video, null, 2));
-	return video;
 }
 
-export async function getLiveVideos(): Promise<Video[]> {
-	console.log('API: getLiveVideos: Starting request');
-	try {
-		const response = await fetch(
-			`${API_URL}/api/videos?filters[type][$eq]=live&sort=order:asc`
-		);
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
-		}
-		const data: StrapiResponse = await response.json();
-		console.log('API: Raw response data:', JSON.stringify(data, null, 2));
-		return data.data.map(transformStrapiVideo);
-	} catch (error) {
-		console.error('API: Error in getLiveVideos:', error);
-		throw error;
+// Cache for API responses (5 minute TTL)
+const cache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+// Helper to get cached data or fetch new data
+async function getCachedData<T>(
+	cacheKey: string,
+	fetchFn: () => Promise<T>
+): Promise<T> {
+	const now = Date.now();
+	const cachedItem = cache.get(cacheKey);
+
+	// Return cached data if valid
+	if (cachedItem && now - cachedItem.timestamp < CACHE_TTL) {
+		return cachedItem.data as T;
 	}
+
+	// Fetch fresh data
+	const data = await fetchFn();
+
+	// Store in cache
+	cache.set(cacheKey, { data, timestamp: now });
+
+	return data;
+}
+
+// Public API functions
+export async function getLiveVideos(): Promise<Video[]> {
+	const cacheKey = 'videos-live';
+
+	return getCachedData(cacheKey, async () => {
+		try {
+			const videos = await getSanityVideosByType('live');
+			return videos.map(transformSanityVideo);
+		} catch (error) {
+			// Only log in development
+			if (process.env.NODE_ENV !== 'production') {
+				console.error(`API Error (live):`, error);
+			}
+			return [];
+		}
+	});
 }
 
 export async function getPlayingAlongVideos(): Promise<Video[]> {
-	console.log('API: getPlayingAlongVideos: Starting request');
-	try {
-		const response = await fetch(
-			`${API_URL}/api/videos?filters[type][$eq]=playing_along&sort=order:asc`
-		);
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
+	const cacheKey = 'videos-playing_along';
+
+	return getCachedData(cacheKey, async () => {
+		try {
+			const videos = await getSanityVideosByType('playing_along');
+			return videos.map(transformSanityVideo);
+		} catch (error) {
+			// Only log in development
+			if (process.env.NODE_ENV !== 'production') {
+				console.error(`API Error (playing_along):`, error);
+			}
+			return [];
 		}
-		const data: StrapiResponse = await response.json();
-		console.log('API: Raw response data:', JSON.stringify(data, null, 2));
-		return data.data.map(transformStrapiVideo);
-	} catch (error) {
-		console.error('API: Error in getPlayingAlongVideos:', error);
-		throw error;
-	}
+	});
 }
 
 export async function getLiveVideoBySlug(slug: string): Promise<Video | null> {
-	console.log('API: getLiveVideoBySlug: Starting request for slug:', slug);
-	try {
-		const response = await fetch(
-			`${API_URL}/api/videos?filters[type][$eq]=live&filters[slug][$eq]=${slug}`
-		);
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
+	const cacheKey = `videos-live-${slug}`;
+
+	return getCachedData(cacheKey, async () => {
+		try {
+			const video = await getSanityVideoBySlug(slug, 'live');
+			return video ? transformSanityVideo(video) : null;
+		} catch (error) {
+			// Only log in development
+			if (process.env.NODE_ENV !== 'production') {
+				console.error(`API Error (live, slug: ${slug}):`, error);
+			}
+			return null;
 		}
-		const data: StrapiResponse = await response.json();
-		console.log('API: Raw response data:', JSON.stringify(data, null, 2));
-		return data.data.length > 0 ? transformStrapiVideo(data.data[0]) : null;
-	} catch (error) {
-		console.error('API: Error in getLiveVideoBySlug:', error);
-		return null;
-	}
+	});
 }
 
 export async function getPlayingAlongVideoBySlug(
 	slug: string
 ): Promise<Video | null> {
-	console.log(
-		'API: getPlayingAlongVideoBySlug: Starting request for slug:',
-		slug
-	);
-	try {
-		const response = await fetch(
-			`${API_URL}/api/videos?filters[type][$eq]=playing_along&filters[slug][$eq]=${slug}`
-		);
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
+	const cacheKey = `videos-playing_along-${slug}`;
+
+	return getCachedData(cacheKey, async () => {
+		try {
+			const video = await getSanityVideoBySlug(slug, 'playing_along');
+			return video ? transformSanityVideo(video) : null;
+		} catch (error) {
+			// Only log in development
+			if (process.env.NODE_ENV !== 'production') {
+				console.error(`API Error (playing_along, slug: ${slug}):`, error);
+			}
+			return null;
 		}
-		const data: StrapiResponse = await response.json();
-		console.log('API: Raw response data:', JSON.stringify(data, null, 2));
-		return data.data.length > 0 ? transformStrapiVideo(data.data[0]) : null;
-	} catch (error) {
-		console.error('API: Error in getPlayingAlongVideoBySlug:', error);
-		return null;
-	}
+	});
 }
