@@ -5,18 +5,22 @@ cd cms &&
 pwd && ls -la && 
 echo 'Installing dependencies...' && 
 npm ci && 
+echo 'Verifying installation...' &&
+ls -la node_modules/.bin &&
 echo 'Building Strapi...' && 
-npm run build && 
+./node_modules/.bin/strapi build &&
 echo 'Initializing database...' && 
-npx strapi database:rebuild --force
+./node_modules/.bin/strapi database:rebuild --force
 """
 
 [deploy]
 startCommand = """
 cd cms &&
 pwd && ls -la &&
+echo 'Verifying Strapi installation...' &&
+ls -la node_modules/.bin &&
 echo 'Starting Strapi...' &&
-npx strapi start
+NODE_ENV=production ./node_modules/.bin/strapi start
 """
 healthcheckPath = "/"
 healthcheckTimeout = 180
@@ -32,4 +36,5 @@ API_TOKEN_SALT = "testsalt"
 ADMIN_JWT_SECRET = "testjwt"
 JWT_SECRET = "testjwtsecret"
 HOST = "0.0.0.0"
-PORT = "1337" 
+PORT = "1337"
+DATABASE_CLIENT = "postgres" 
