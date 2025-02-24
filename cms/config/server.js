@@ -1,46 +1,19 @@
 module.exports = ({ env }) => {
 	const app = {
 		keys: env.array('APP_KEYS'),
-	};
-
-	// Add basic health check middleware
-	app.middleware = {
-		before: [
-			async (ctx, next) => {
-				console.log(`[Health Check] Request received at path: ${ctx.path}`);
-				
-				// Match both root and /health paths
-				if (ctx.path === '/' || ctx.path === '/health') {
-					try {
-						// Basic server health check
-						console.log('[Health Check] Checking server status...');
-						
-						// Database health check
-						console.log('[Health Check] Testing database connection...');
-						await strapi.db.connection.raw('SELECT 1');
-						
-						console.log('[Health Check] All checks passed');
+		middleware: {
+			before: [
+				async (ctx, next) => {
+					if (ctx.path === '/health') {
+						console.log('[Health Check Middleware] /health endpoint hit');
 						ctx.status = 200;
-						ctx.body = {
-							status: 'healthy',
-							timestamp: new Date().toISOString(),
-							environment: process.env.NODE_ENV,
-							database: 'connected'
-						};
-					} catch (error) {
-						console.error('[Health Check] Error:', error);
-						ctx.status = 503;
-						ctx.body = {
-							status: 'unhealthy',
-							timestamp: new Date().toISOString(),
-							error: error.message
-						};
+						ctx.body = 'OK';
+						return;
 					}
-					return;
-				}
-				await next();
-			}
-		]
+					await next();
+				},
+			],
+		},
 	};
 
 	const config = {
