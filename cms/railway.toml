@@ -1,6 +1,7 @@
 [build]
 provider = "node"
 buildCommand = """
+cd cms &&
 pwd && ls -la && 
 echo 'Installing dependencies...' && 
 npm ci && 
@@ -9,7 +10,7 @@ NODE_ENV=production npm run build
 """
 
 [deploy]
-startCommand = "npm run start"
+startCommand = "cd cms && NODE_ENV=production npm run start"
 healthcheckPath = "/"
 healthcheckTimeout = 180
 healthcheckInterval = 30
