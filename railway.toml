@@ -16,9 +16,10 @@ node-version = "18.19.0"
 rootDir = "cms"
 plan = [
     "cache.node = false",
-    "cache.npm = false"
+    "cache.npm = false",
+    "install.command = npm install",
+    "build.command = npm run build"
 ]
-installCommand = "npm install"
 
 [deploy.envVars]
 NODE_ENV = "production"
