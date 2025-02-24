@@ -4,21 +4,13 @@ buildCommand = """
 pwd && ls -la && 
 echo 'Installing dependencies...' && 
 npm ci && 
-echo 'Verifying installation...' &&
-ls -la node_modules/.bin &&
 echo 'Building Strapi...' && 
-NODE_ENV=production npm run build &&
-echo 'Initializing database...' && 
-NODE_ENV=production npm run strapi database:rebuild -- --force
+NODE_ENV=production npm run build
 """
 
 [deploy]
-startCommand = """
-pwd && ls -la &&
-echo 'Starting Strapi...' &&
-NODE_ENV=production DEBUG=strapi:* npm run start
-"""
-healthcheckPath = "/health"
+startCommand = "npm run start"
+healthcheckPath = "/"
 healthcheckTimeout = 180
 healthcheckInterval = 30
 healthcheckInitialDelay = 60

@@ -4,8 +4,7 @@ module.exports = ({ env }) => {
 		middleware: {
 			before: [
 				async (ctx, next) => {
-					if (ctx.path === '/health') {
-						console.log('[Health Check Middleware] /health endpoint hit');
+					if (ctx.path === '/') {
 						ctx.status = 200;
 						ctx.body = 'OK';
 						return;
