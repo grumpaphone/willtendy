@@ -11,52 +11,31 @@ module.exports = ({ env }) => {
 		DATABASE_URL: env('DATABASE_URL'),
 		NODE_ENV: process.env.NODE_ENV,
 		DATABASE_CLIENT: process.env.DATABASE_CLIENT,
-		PGHOST: process.env.PGHOST,
-		PGPORT: process.env.PGPORT,
-		PGDATABASE: process.env.PGDATABASE,
-		PGUSER: process.env.PGUSER,
 		DATABASE_SSL: process.env.DATABASE_SSL,
 	});
 
-	const client = env('DATABASE_CLIENT', 'postgres');
-
-	const connections = {
-		postgres: {
-			connection: {
-				host: env('PGHOST'),
-				port: env.int('PGPORT'),
-				database: env('PGDATABASE'),
-				user: env('PGUSER'),
-				password: env('PGPASSWORD'),
-				ssl:
-					env('DATABASE_SSL') === 'true'
-						? {
-								rejectUnauthorized: false,
-							}
-						: false,
-				debug: false,
-			},
-			pool: {
-				min: 0,
-				max: 10,
-				acquireTimeoutMillis: 60000,
-				createTimeoutMillis: 30000,
-				idleTimeoutMillis: 30000,
-				reapIntervalMillis: 1000,
-				createRetryIntervalMillis: 100,
-			},
-		},
-	};
-
 	return {
 		connection: {
-			client,
-			...connections[client],
-			acquireConnectionTimeout: 60000,
+			client: 'postgres',
+			connection: {
+				connectionString: env('DATABASE_URL'),
+				ssl: env('DATABASE_SSL') === 'true' ? {
+					rejectUnauthorized: false
+				} : false,
+				debug: true,
+			},
 			pool: {
 				min: 0,
-				max: 10,
+				max: 5,
+				acquireTimeoutMillis: 300000,
+				createTimeoutMillis: 300000,
+				destroyTimeoutMillis: 50000,
+				idleTimeoutMillis: 300000,
+				reapIntervalMillis: 10000,
+				createRetryIntervalMillis: 2000,
+				propagateCreateError: false,
 			},
+			debug: true,
 		},
 	};
 };

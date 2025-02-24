@@ -47,16 +47,33 @@ module.exports = ({ env }) => {
 		host: env('HOST', '0.0.0.0'),
 		port: env.int('PORT', 1337),
 		app,
+		url: env('STRAPI_ADMIN_BACKEND_URL', 'http://localhost:1337'),
 		webhooks: {
 			populateRelations: env.bool('WEBHOOKS_POPULATE_RELATIONS', false),
 		},
+		admin: {
+			auth: {
+				secret: env('ADMIN_JWT_SECRET'),
+			},
+		},
 	};
+
+	// Parse CORS origins from environment variable
+	const corsOrigins = env('CORS_ORIGIN', '').split(',').filter(Boolean);
+	if (corsOrigins.length > 0) {
+		console.log('[Server] Setting CORS origins:', corsOrigins);
+		config.cors = {
+			origin: corsOrigins,
+			credentials: true,
+		};
+	}
 
 	console.log('[Server] Starting with config:', {
 		host: config.host,
 		port: config.port,
 		env: process.env.NODE_ENV,
-		database: process.env.DATABASE_CLIENT
+		url: config.url,
+		cors: config.cors,
 	});
 
 	return config;
