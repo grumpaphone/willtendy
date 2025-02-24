@@ -8,7 +8,7 @@ healthcheckPath = "/"
 healthcheckTimeout = 60
 healthcheckInterval = 30
 healthcheckInitialDelay = 30
-restartPolicyType = "on-failure"
+restartPolicy = "on_failure"
 numReplicas = 1
 
 [nixpacks]
